@@ -1,0 +1,148 @@
+The analyses needed to assess the results of my data consist of observing the relationship between the sexes, years of education, cognitive performance scores, depression scores and APOE gene status within and between diagnostic groups. Participants are split up into four diagnostic groups: 1. healthy aging controls, 2. early mild cognitive impairment, 3. late cognitive impairment, and 4. Alzheimer’s disease. All of the data required for the study was collected and transferred to an excel sheet and the excel spreadsheet was read into R to interpret the data. First, I will look at descriptive statistics of diagnostic groups, sexes, marital status, and APOE1 and APOE2 gene distribution. Second, look at the mean and standard deviation of years of education across the whole population. Third, run a t-test to see relationship between sex and diagnostic status. Fourth, run correlations between diagnostic status and 
+•	Marital status 
+•	Years of education 
+•	All of the cognitive scores (14 scores) 
+•	Depression score 
+Fifth run two ANOVA models to see if there is a difference between diagnostic status, years of education and MMSE (mini mental screening examination) cognitive scores and another ANOVA but looking at immediate recall cognitive tests scores instead of MMSE. Sixth, look at male and female depression based on GDR (geriatric depression rating score) and mean marital status (coded as 1=Married; 2=Widowed; 3=Divorced; 4=Never married; 5=Unknown). Seventh, I will look at the each diagnostic status separately and the relationship between years of education and mean MMSE cognitive scores. Lastly, I will look at a summary of all the data as well as describe all the data (summary(df), describe(df)). Ggplots scripted in my code are attached as images. In sum, my goal is to answer the question: is there a specific variable (i.e. depression, sex, or marital status) that is more predictive of diagnostic status between healthy aging, different stages of mild cognitive impairement, and Alzheimer's disease. All of the analysis will be conducted in R. 
+
+## loading packages
+library(readxl)
+library(psych)
+library(tidyverse)
+library(lme4)
+library(ggplot2)
+
+## setting working directory
+setwd('C:/Users/asamson/Desktop/PSY-1201Programming')
+
+#import to data frame 
+df = read_excel("MA.Pseudocode.xlsx", sheet = "data") 
+view(df)
+
+#descriptive statistics of pariticpants in each diagnostic group  
+# 1 = CN, 2 = EMCI, 3 = LMCI, 4 = AD
+table(df$Diagnosis)
+
+#descriptive statistics of sex 
+#1 = men, 2 = women 
+table(df$Sex)
+
+#descriptive stats of marital status 
+#1=Married;2=Widowed;3=Divorced;4=Nevermarried;5=Unknown
+table(df$MaritalStatus)
+
+#descriptive statistics of APOE1 and APOE2 gene status 
+table(df$APOE1)
+table(df$APOE2)
+
+#mean and SD of years of education 
+summarize(df, mean = mean(Education, na.rm=TRUE), sd = sd(Education, na.rm=TRUE))
+
+#see if there is a sex difference by diagnosis 
+t.test(df$Diagnosis, df$Sex, paired = TRUE)
+
+#analyze correltaion between marital status and diagnosis
+cor.test(df$Diagnosis, df$MaritalStatus)
+
+#analyze correlation between years of education and diagnosis
+cor.test(df$Diagnosis, df$Education)
+
+
+#correlation betwen diagnosis and all the cognitive and behavioural scores: 
+cor.test(df$Diagnosis, df$ADAS)
+cor.test(df$Diagnosis, df$MoCA)
+cor.test(df$Diagnosis, df$ECogSP)
+cor.test(df$Diagnosis, df$ECogP)
+cor.test(df$Diagnosis, df$MMSE)
+cor.test(df$Diagnosis, df$CD)
+cor.test(df$Diagnosis, df$LM)
+cor.test(df$Diagnosis, df$Rimmediate)
+cor.test(df$Diagnosis, df$CFT)
+cor.test(df$Diagnosis, df$TMA)
+cor.test(df$Diagnosis, df$TMB)
+cor.test(df$Diagnosis, df$LMD)
+cor.test(df$Diagnosis, df$MINT)
+cor.test(df$Diagnosis, df$FAQ)
+cor.test(df$Diagnosis, df$NPI)
+cor.test(df$Diagnosis, df$CDR)
+cor.test(df$Diagnosis, df$GDR)
+
+#diagnostic status based on education and MMSE score 
+model = lm(Diagnosis ~ Education * MMSE, data = df) 
+model %>% anova()
+
+#diagnostic status based on education and immediate recall score
+model = lm(Diagnosis ~ Education * LM, data = df) 
+model %>% anova()
+
+
+#relationship between sex and education within diagnostic groups
+model = lm(Diagnosis ~ Sex + Education, data = df) 
+model %>% anova()
+
+#how many participants in each diagnostic group have APOE E4 allele gene 
+#on both APOE1 and APOE2
+#E4 is a genetic risk factor for AD especially if it is found on both alleles
+APOEE4 <- df %>%
+  filter(APOE1=='4',APOE2=='4') %>% # restrict to just E4 gene on both alleles 
+  group_by_at(vars(Diagnosis)) %>% # group trials by diagnostic group 
+  summarise(n = n()) #population per group 
+
+#looking at the difference between the sexes and depression scores 
+#based on marital status: 
+#1=Married;2=Widowed;3=Divorced;4=Nevermarried;5=Unknown
+maledepr <- df %>%
+  filter(Sex=='1') %>% # restrict to only males
+  group_by_at(vars(GDR)) %>% # group trials by geriatric depression rating 
+  summarise(mean=mean(MaritalStatus),n = n()) #compute mean mariatl status for each group GDR scores
+
+femdepr <- df %>%
+  filter(Sex=='2') %>% # restrict to only females
+  group_by_at(vars(GDR)) %>% # group trials by geriatric depression rating 
+  summarise(mean=mean(MaritalStatus),n = n()) #compute mean mariatl status for each group GDR scores
+
+#looking at the difference between diagnostic status
+#by years of education and 
+#mean MMSE cognitive perfromance scores
+#a higher MMSE score relates to better cognitive performance
+HC <- df %>%
+  filter(Diagnosis=='1') %>% # restrict to just healthy control (HC)
+  group_by_at(vars(Education)) %>% # group trials by years of education 
+  summarise(mean=mean(MMSE),n = n()) # compute mean MMSE for each group of education 
+
+EMCI <- df %>%
+  filter(Diagnosis=='2') %>% # restrict to just early MCI 
+  group_by_at(vars(Education)) %>% # group trials by years of education 
+  summarise(mean=mean(MMSE),n = n()) # compute mean MMSE for each group of education 
+LMCI <- df %>%
+  filter(Diagnosis=='3') %>% # restrict to just late MCI 
+  group_by_at(vars(Education)) %>% # group trials by years of education  
+  summarise(mean=mean(MMSE),n = n()) # compute mean MMSE for each group of education 
+AD <- df %>%
+  filter(Diagnosis=='4') %>% # restrict to just Alzheimer's disease (AD)
+  group_by_at(vars(Education)) %>% # group trials by years of education 
+  summarise(mean=mean(MMSE),n = n()) # compute mean MMSE for each group of education 
+
+## data summaries
+summary(df)
+describe(df)
+
+#bargraph of population per diagnostic group
+ggplot(df) + 
+  geom_bar(mapping=aes(x=Diagnosis,y = n),stat ="identity") +
+  ggtitle("Population per Diagnostic Group")
+
+#graphical representation of the relationship between diangostic status and
+#ADAS scores (should be positive correlation because ADAS is a measure of AD symptoms)
+ggplot(df, aes(x=Diagnosis, y= ADAS)) +
+  geom_point(color="red") +
+  ggtitle("Correlation between ADAS scores and Diagnostic Status")
+
+
+
+#graphic representation of years of educaiton by diagnostic status 
+ggplot(df, aes(x=Diagnosis, y= Education)) +
+  geom_area(color="blue")+
+  ggtitle("Years of Education by Diagnostic Group")
+
+
