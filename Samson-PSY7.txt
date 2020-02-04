@@ -1,10 +1,25 @@
-The analyses needed to assess the results of my data consist of observing the relationship between the sexes, years of education, cognitive performance scores, depression scores and APOE gene status within and between diagnostic groups. Participants are split up into four diagnostic groups: 1. healthy aging controls, 2. early mild cognitive impairment, 3. late cognitive impairment, and 4. Alzheimer’s disease. All of the data required for the study was collected and transferred to an excel sheet and the excel spreadsheet was read into R to interpret the data. First, I will look at descriptive statistics of diagnostic groups, sexes, marital status, and APOE1 and APOE2 gene distribution. Second, look at the mean and standard deviation of years of education across the whole population. Third, run a t-test to see relationship between sex and diagnostic status. Fourth, run correlations between diagnostic status and 
+BRIEF PARAGRAPH EXPLAINING RAW DATA FROM EXPERIMENT
+The analyses needed to assess the results of my data consist of observing the relationship between the sexes, years of education, 
+cognitive performance scores, depression scores and APOE gene status within and between diagnostic groups. Participants are split up 
+into four diagnostic groups: 1. healthy aging controls, 2. early mild cognitive impairment, 3. late cognitive impairment, and 
+4. Alzheimer’s disease. All of the data required for the study was collected and transferred to an excel sheet and the excel spreadsheet
+was read into R to interpret the data. First, I will look at descriptive statistics of diagnostic groups, sexes, marital status, 
+and APOE1 and APOE2 gene distribution. Second, look at the mean and standard deviation of years of education across the whole population.
+Third, run a t-test to see relationship between sex and diagnostic status. Fourth, run correlations between diagnostic status and 
 •	Marital status 
 •	Years of education 
 •	All of the cognitive scores (14 scores) 
 •	Depression score 
-Fifth run two ANOVA models to see if there is a difference between diagnostic status, years of education and MMSE (mini mental screening examination) cognitive scores and another ANOVA but looking at immediate recall cognitive tests scores instead of MMSE. Sixth, look at male and female depression based on GDR (geriatric depression rating score) and mean marital status (coded as 1=Married; 2=Widowed; 3=Divorced; 4=Never married; 5=Unknown). Seventh, I will look at the each diagnostic status separately and the relationship between years of education and mean MMSE cognitive scores. Lastly, I will look at a summary of all the data as well as describe all the data (summary(df), describe(df)). Ggplots scripted in my code are attached as images. In sum, my goal is to answer the question: is there a specific variable (i.e. depression, sex, or marital status) that is more predictive of diagnostic status between healthy aging, different stages of mild cognitive impairement, and Alzheimer's disease. All of the analysis will be conducted in R. 
+Fifth run two ANOVA models to see if there is a difference between diagnostic status, years of education and MMSE (mini mental 
+screening examination) cognitive scores and another ANOVA but looking at immediate recall cognitive tests scores instead of MMSE. 
+Sixth, look at male and female depression based on GDR (geriatric depression rating score) and mean marital status (coded as 1=Married;
+2=Widowed; 3=Divorced; 4=Never married; 5=Unknown). Seventh, I will look at the each diagnostic status separately and the relationship 
+between years of education and mean MMSE cognitive scores. Lastly, I will look at a summary of all the data as well as describe all the 
+data (summary(df), describe(df)). Ggplots scripted in my code are attached as images. In sum, my goal is to answer the question: is there
+a specific variable (i.e. depression, sex, or marital status) that is more predictive of diagnostic status between healthy aging, 
+different stages of mild cognitive impairement, and Alzheimer's disease. All of the analysis will be conducted in R. 
 
+PSEUDOCODE FOR RAW DATA 
 ## loading packages
 library(readxl)
 library(psych)
